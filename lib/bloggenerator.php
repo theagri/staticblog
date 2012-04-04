@@ -47,7 +47,7 @@ class BlogGenerator {
 	}
 
 	public function render_template($name,$replacements=array()) {
-		$template_html = file_get_contents(sprintf('%s/templates/%s.html',MB_BASE_PATH,$name));
+		$template_html = file_get_contents(sprintf('%s/templates/%s.tpl',MB_BASE_PATH,$name));
 		foreach($replacements as $key=>$value) {
 			$template_html = str_replace($key, $value, $template_html);
 		}
