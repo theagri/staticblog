@@ -7,7 +7,7 @@ body {
 
 section {
 	width: 50%;
-	min-width: 400px;
+	min-width: 700px;
 	margin: 0 auto;
 }
 
@@ -72,4 +72,10 @@ a:hover {
 	color: #bbb;
 	text-align: right;
 	margin: 0;
+}
+
+img {
+	display: block;
+	border: 0;
+	margin: 0 auto;
 }

@@ -23,10 +23,13 @@ class BlogGenerator {
 				$post_path = sprintf('%s/%s',$this->posts_path,$filename);
 				$post_body = file_get_contents($post_path);
 				$post_timestamp = filemtime($post_path);
+				$post_html_filename = str_replace('.md','.html',$filename);
+				$post_url = sprintf('%s/%s',MB_BASE_URL,$post_html_filename);
 				$this->posts[$post_timestamp] = array(
 					'filename' => $filename,
+					'html_filename' => $post_html_filename,
 					'timestamp' => $post_timestamp,
-					'html_filename' => str_replace('.md','.html',$filename),
+					'url' => $post_url,
 					'content' => $post_body,
 					'title' => substr(reset(explode("\n",$post_body)),1)
 				);
@@ -43,7 +46,10 @@ class BlogGenerator {
 
 	public function write_index_file() {
 		file_put_contents('index.html',$this->render_archive());
+	}
 
+	public function write_feed_file() {
+		file_put_contents('rss.xml',$this->render_feed());
 	}
 
 	public function render_template($name,$replacements=array()) {
@@ -76,6 +82,23 @@ class BlogGenerator {
 		);
 	}
 
+	public function render_feed() {
+		$feed_posts = '';
+		foreach(array_slice($this->posts,0,100) as $post) {
+			 $feed_posts .= $this->render_template('feed_post',array(
+				'#title'=>$post['title'],
+				'#content'=>Markdown($post['content']),
+				'#url'=>$post['url'],
+				'#pubdate'=>@date('r',$post['timestamp'])
+			));
+		}
+
+		return sprintf('%s %s %s',
+			$this->render_template('feed_header',array('#title'=>'Kalle Persson', '#baseurl'=>MB_BASE_URL)),
+			$feed_posts,
+			$this->render_template('feed_footer')
+		);
+	}
 	public function render_post($post) {
 		return $this->render_template('post',array(
 			'#title'=>$post['title'],
